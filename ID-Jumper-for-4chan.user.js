@@ -7,7 +7,7 @@
 // @include     http*://boards.4chan.org/bant/*
 // @exclude     http*://boards.4chan.org/pol/catalog
 // @exclude     http*://boards.4chan.org/bant/catalog
-// @version     0.1.0
+// @version     0.1.1
 // @grant       none
 // @run-at      document-end
 // @updateURL   https://github.com/ebinBuddha/ID-Jumper-for-4chan/raw/master/ID-Jumper-for-4chan.meta.js
@@ -16,6 +16,11 @@
 
 var classes = [];
 var ids     = [];
+
+// retarded javascript is retarded
+function mod(n, m) {
+    return ((n % m) + m) % m;
+}
 
 /** parse the posts already on the page before thread updater kicks in */
 function parseOriginalPosts() {
@@ -27,35 +32,35 @@ function parseOriginalPosts() {
 }
 
 
-function gotoNext(className,post) {
+function Jump(className,post,dir) {
     var index = classes.indexOf(className);
     if (index >- 1) {
         var index2 = ids[index].indexOf("pc" + post);
         if (index2 >- 1 ) { // which should be ffs
             var len = ids[index].length;
-            
-            var dest = ids[index][(index2+1) % len]; // get next post by same id, goes back from the first if last is clicked
+
+            var dest = ids[index][mod(index2+dir,len)]; // get next post by same id, goes back from the first if last is clicked
             document.getElementById(dest).scrollIntoView();
         }
     }
 }
 
 
-//⏩
+//⏪ ⏩
 function setup() {
     console.log("setup");
     var boardID = window.location.pathname.split('/')[1];
-    
+
     postNrs.forEach(function (post) {
         var postToAddArrowTo = document.getElementById("pc" + post),
         postInfo = postToAddArrowTo.getElementsByClassName('postInfo')[0],
         nameBlock = postInfo.getElementsByClassName('nameBlock')[0],
         currentID = nameBlock.getElementsByClassName('posteruid')[0];
-        
+
         if (!currentID) return;
-        
+
         var className = currentID.className;
-        
+
         if (classes.indexOf(className)==-1) {
            classes.push(className);
            var tempindex = classes.indexOf(className);
@@ -66,25 +71,32 @@ function setup() {
         var index = classes.indexOf(className);
         ids[index].push("pc" + post);
         // add the button
+        var bwdButton = document.createElement('a');
+
+        currentID.appendChild(bwdButton);
+        bwdButton.class = "bwdButton";
+        bwdButton.innerHTML = "⏪ ";
+        bwdButton.onclick = function(){Jump(className,post,-1);};
+        bwdButton.href = "javascript:void(0)";
+
+        currentID.appendText = " ";
+
         var fwdButton = document.createElement('a');
-
-        currentID.appendChild(fwdButton);   
+        currentID.appendChild(fwdButton);
         fwdButton.class = "fwdButton";
-        fwdButton.innerHTML = "⏩";
-        fwdButton.onclick = function(){gotoNext(className,post);}
+        fwdButton.innerHTML = " ⏩";
+        fwdButton.onclick = function(){Jump(className,post,1);};
         fwdButton.href = "javascript:void(0)";
-        
-        //postNrs are resolved and should be removed from this variable
-        var index = postNrs.indexOf(post.post_nr);
-        if (index > -1) {
-            postNrs.splice(index, 1);
-        }        
-        
-    });
-    
-    postNrs = [];
-    
 
+        //postNrs are resolved and should be removed from this variable
+        var idx = postNrs.indexOf(post.post_nr);
+        if (idx > -1) {
+            postNrs.splice(idx, 1);
+        }
+
+    });
+
+    postNrs = [];
 }
 
 function resolvePosts() {
