@@ -5,9 +5,9 @@ Do you want to follow all the OP posts yet you are too lazy to hit `Ctrl+F`?
 
 Don't worry, we got you covered!
 
-This script allows you to jump to the next post from the same ID in /pol/ and /bant/ threads. It will put a little **Fast-Forward** `⏩` button near the poster ID.
+This script allows you to jump to the next post from the same ID in /pol/ and /bant/ threads. It will put a little **Rewind** `⏪` and **Fast-Forward** `⏩` button near the poster ID.
 
-Just **click it** to jump to the next post!
+Just **click** to jump to the previous or the next post!
 
 <center><kbd><img src="https://github.com/ebinBuddha/ID-Jumper-for-4chan/raw/master/jumper.png" /></kbd></center>
 
